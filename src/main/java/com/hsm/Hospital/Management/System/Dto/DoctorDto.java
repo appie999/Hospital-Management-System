@@ -16,5 +16,4 @@ public class DoctorDto extends UserDto {
         private String lastName;
         private String speciality;
 
-
 }
