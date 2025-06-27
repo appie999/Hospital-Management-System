@@ -37,7 +37,7 @@ public class DoctorService {
     public DoctorDto editDoctor(Long id, DoctorDto doctorDto){
         Doctor doctor = doctorRepository.findById(id).get();
         doctor.setUserName(doctorDto.getUserName());
-        doctor.setPassWord(doctorDto.getUserName());
+        doctor.setPassWord(doctorDto.getPassWord());
         doctor.setEmail(doctorDto.getEmail());
         doctor.setRole(doctorDto.getRole());
         doctor.setFirstName(doctorDto.getFirstName());
