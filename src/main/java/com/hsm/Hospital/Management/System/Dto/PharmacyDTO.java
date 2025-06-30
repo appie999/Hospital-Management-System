@@ -1,5 +1,6 @@
 package com.hsm.Hospital.Management.System.Dto;
 
+import com.hsm.Hospital.Management.System.Entity.Medicine;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ import java.util.List;
 public class PharmacyDTO {
 
         private Long id;
-        private List<Long> medicineIds;
+        private List<Medicine> medicineIds;
 
 }
