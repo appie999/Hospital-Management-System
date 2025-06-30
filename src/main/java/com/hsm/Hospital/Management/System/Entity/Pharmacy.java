@@ -2,18 +2,12 @@ package com.hsm.Hospital.Management.System.Entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class Pharmacy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +17,27 @@ public class Pharmacy {
     @OneToMany(mappedBy = "pharmacy")
     private List<Medicine> medicines;
 
+    public Pharmacy(Long id, List<Medicine> medicines) {
+        this.id = id;
+        this.medicines = medicines;
+    }
+
+    public Pharmacy() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Medicine> getMedicines() {
+        return medicines;
+    }
+
+    public void setMedicines(List<Medicine> medicines) {
+        this.medicines = medicines;
+    }
 }

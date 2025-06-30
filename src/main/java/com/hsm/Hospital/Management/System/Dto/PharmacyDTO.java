@@ -8,14 +8,34 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 
 public class PharmacyDTO {
 
         private Long id;
         private List<Medicine> medicineIds;
 
+        public PharmacyDTO(List<Medicine> medicineIds, Long id) {
+                this.medicineIds = medicineIds;
+                this.id = id;
+        }
+
+        public PharmacyDTO() {
+        }
+
+        public Long getId() {
+                return id;
+        }
+
+        public void setId(Long id) {
+                this.id = id;
+        }
+
+        public List<Medicine> getMedicineIds() {
+                return medicineIds;
+        }
+
+        public void setMedicineIds(List<Medicine> medicineIds) {
+                this.medicineIds = medicineIds;
+        }
 }
