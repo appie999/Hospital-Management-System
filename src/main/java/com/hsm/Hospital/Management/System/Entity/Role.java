@@ -1,6 +1,6 @@
 package com.hsm.Hospital.Management.System.Entity;
 
-public enum Role {
+public enum   Role {
     ADMIN,
     DOCTOR,
     PATIENT
