@@ -16,6 +16,7 @@ public class Invoice {
     private Date date;
 
     @ManyToOne
+    @JoinColumn(name = "patient_id")
     private Patient patient;
 
     public Long getId() {

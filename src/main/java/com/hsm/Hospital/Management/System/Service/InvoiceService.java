@@ -2,8 +2,11 @@ package com.hsm.Hospital.Management.System.Service;
 
 import com.hsm.Hospital.Management.System.Dto.InvoiceDTO;
 import com.hsm.Hospital.Management.System.Entity.Invoice;
+import com.hsm.Hospital.Management.System.Entity.Patient;
 import com.hsm.Hospital.Management.System.Mapper.InvoiceMapper;
 import com.hsm.Hospital.Management.System.Repository.InvoiceRepository;
+import com.hsm.Hospital.Management.System.Repository.PatientRepository;
+import com.hsm.Hospital.Management.System.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,23 +15,35 @@ import java.util.List;
 @Service
 public class InvoiceService {
 
-    @Autowired
-    private InvoiceMapper mapper;
 
-    @Autowired
-    private InvoiceRepository repository;
+    private final InvoiceMapper invoiceMapper;
+
+    private final InvoiceRepository repository;
+    private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
+
+    public InvoiceService(InvoiceMapper invoiceMapper, InvoiceRepository repository, UserRepository userRepository, PatientRepository patientRepository) {
+        this.invoiceMapper = invoiceMapper;
+        this.repository = repository;
+        this.userRepository = userRepository;
+        this.patientRepository = patientRepository;
+    }
 
     public InvoiceDTO saveInvoice(InvoiceDTO dto){
-        return mapper.toDTO(repository.save(mapper.toEntity(dto)));
+        Patient patient =
+                patientRepository.findById(dto.getPatientId()).get();
+        var invoice = invoiceMapper.toEntity(dto);
+        invoice.setPatient(patient);
+        return invoiceMapper.toDTO(repository.save(invoice));
     }
 
     public InvoiceDTO getInvoiceById(Long id){
         Invoice invoice = repository.findById(id).orElseThrow(()->new RuntimeException("invoice not found"));
-        return mapper.toDTO(invoice);
+        return invoiceMapper.toDTO(invoice);
     }
 
     public List<InvoiceDTO> getAllInvoices(){
-        return repository.findAll().stream().map(invoice -> mapper.toDTO(invoice)).toList();
+        return repository.findAll().stream().map(invoiceMapper::toDTO).toList();
     }
 
     public InvoiceDTO editInvoice(Long id, InvoiceDTO dto){
@@ -36,7 +51,7 @@ public class InvoiceService {
         invoice.setId(dto.getId());
         invoice.setDate(dto.getDate());
         invoice.setAmount(dto.getAmount());
-        return mapper.toDTO(repository.save(invoice));
+        return invoiceMapper.toDTO(repository.save(invoice));
     }
 
     public void deleteInvoice(Long id){
