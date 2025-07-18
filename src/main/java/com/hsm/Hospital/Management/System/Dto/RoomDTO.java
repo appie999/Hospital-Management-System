@@ -1,9 +1,13 @@
 package com.hsm.Hospital.Management.System.Dto;
 
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 public class RoomDTO {
     private Long id;
     private Long roomNumber;
+    @Enumerated(EnumType.STRING)
     private Boolean isOccupied;
     private Long assignedPatientId;
 
