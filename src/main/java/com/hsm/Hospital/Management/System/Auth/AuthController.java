@@ -1,14 +1,17 @@
 package com.hsm.Hospital.Management.System.Auth;
 
 
+import com.hsm.Hospital.Management.System.Entity.Role;
 import com.hsm.Hospital.Management.System.Entity.User;
 import com.hsm.Hospital.Management.System.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,25 +34,36 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest request) {
         try {
-            // Authenticate user credentials
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
-            // Find user in DB
             User user = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-            // Generate JWT
             String token = jwtService.generateToken(user.getEmail());
-
-            return new AuthResponse(token);
+            return new AuthResponse(token, user.getRole().name(), user.getUserName());
 
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Invalid email or password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
+    }
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody AuthRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email déjà utilisé");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setUserName(request.getUserName());
+        user.setPassWord(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.PATIENT);
+
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(user.getEmail());
+        return new AuthResponse(token, user.getRole().name(), user.getUserName());
     }
 }
